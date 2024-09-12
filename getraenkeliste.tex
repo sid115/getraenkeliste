@@ -1,0 +1,70 @@
+\documentclass[a4paper,landscape]{article} % Dokumentenklasse für A4-Seiten im Querformat
+\usepackage[utf8]{inputenc} % Paket zur Unterstützung von UTF-8-Zeichenkodierung
+\usepackage{geometry} % Paket zur Anpassung der Seitenränder
+\usepackage{tikz} % Paket zur Erstellung von Grafiken und Zeichnungen
+\usepackage{array} % Paket zur Verbesserung der Tabellenformatierung
+\usepackage{fancyhdr} % Paket zur Anpassung der Kopf- und Fußzeilen
+\usepackage{xcolor} % Paket zur Verwendung von Farben
+\usepackage{forloop} % Paket zur Verwendung von for-Schleifen
+
+% Anpassung der Seitenränder
+\geometry{left=0.5cm,right=0.5cm,top=1cm,bottom=1cm}
+
+% Seitenstil festlegen, um die Seitennummerierung auszuschalten
+\pagestyle{empty}
+
+\begin{document}
+
+% Definition der Kreisgröße und des Abstands
+\newcommand{\circlesize}{0.4cm} % Größe der Kreise
+\newcommand{\circlemargin}{1.1} % Faktor für den Abstand der Kreise (relativ zur Kreisgröße)
+\newcommand{\groupmargin}{1.6} % Faktor für den Abstand zwischen Gruppen von 8 Kreisen (relativ zur Kreisgröße)
+\newcounter{rownum} % Zähler für die Zeilenanzahl
+\newcounter{totalrows} % Gesamtanzahl der Zeilen
+
+% Setzen der Gesamtanzahl der Zeilen
+\setcounter{totalrows}{16} % Hier die gewünschte Anzahl der Zeilen anpassen
+
+% Definition eines neuen Befehls zur Erstellung der Getränkekreise
+\newcommand{\drinkcircles}{
+    \begin{tikzpicture}[baseline={(current bounding box.center)}]
+        % Schleife zur Erstellung von 48 Kreisen
+        \foreach \i in {1,...,48} {
+            % Berechnet den zusätzlichen Abstand zwischen Gruppen von 8 Kreisen
+            \pgfmathsetmacro{\extra}{int((\i-1)/8)*(\groupmargin-\circlemargin)*\circlesize}
+            % Zeichnet einen Kreis an der Position (\i * Abstand + zusätzlicher Abstand, 0)
+            \node at (\i*\circlemargin*\circlesize + \extra, 0) [draw, circle, minimum size=\circlesize] {};
+        }
+    \end{tikzpicture}
+}
+
+\centering % Zentriert die Tabelle auf der Seite
+\renewcommand{\arraystretch}{0.5} % Verringerung der Zeilenhöhe
+\begin{tabular}{|m{5cm}|p{22.1cm}|} % Definition der Tabellenspalten mit festen Breiten
+    \hline
+    \textbf{Name} & \textbf{Getränke} \\ % Kopfzeile der Tabelle
+    \hline
+    \forloop{rownum}{1}{\value{rownum} < \value{totalrows}}{%
+        \rule{0pt}{1cm} & \drinkcircles \\ % Zeile mit Kreisen
+        \hline
+    }
+\end{tabular}
+
+\vspace{1cm} % Platz zwischen Tabelle und Legende
+
+% Legende unter der Tabelle
+\begin{tikzpicture}
+    % Grüner Kreis für bezahltes Getränk
+    \node at (0,0) [draw, circle, fill=green, minimum size=\circlesize] {};
+    \node at (2,0) {Bezahltes Getränk}; % Text neben dem grünen Kreis
+
+    % Durchgestrichener Kreis für getrunkenes Getränk
+    \node at (6,0) [draw, circle, minimum size=\circlesize] {};
+    \draw (5.85, -0.15) -- (6.15, 0.15); % Linie von links unten nach rechts oben
+    \node at (8,0) {Getrunkenes Getränk}; % Text neben dem durchgestrichenen Kreis
+
+    % Preisinformation
+    \node at (14,0) {Ein Getränk kostet 1€};
+\end{tikzpicture}
+
+\end{document}
